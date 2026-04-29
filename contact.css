@@ -1,0 +1,101 @@
+/* =========================================
+   CONTACT SECTION — REFINED
+   ========================================= */
+.contact-sec {
+  padding: 100px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.contact-left h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  color: var(--soil);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.contact-left p {
+  font-size: 1.1rem;
+  color: var(--bark);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.qform {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: #FDFAF4;
+  padding: 40px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--glass-border);
+}
+
+.qform input, 
+.qform select, 
+.qform textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--parchment);
+  background: var(--cream);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--soil);
+  transition: all 0.3s var(--transition);
+}
+
+.qform input:focus, 
+.qform select:focus, 
+.qform textarea:focus {
+  outline: none;
+  border-color: var(--dusk);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(196, 149, 106, 0.1);
+}
+
+.qform textarea {
+  grid-column: span 2;
+  min-height: 150px;
+  resize: vertical;
+}
+
+.qform button {
+  grid-column: span 2;
+  padding: 16px;
+  background: var(--soil);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: none; /* Matches site cursor */
+  transition: all 0.35s var(--transition);
+}
+
+.qform button:hover {
+  background: var(--bark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(92, 74, 50, 0.2);
+}
+
+@media (max-width: 900px) {
+  .contact-sec {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 60px 24px;
+  }
+  .qform {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .qform textarea, .qform button { grid-column: span 1; }
+}

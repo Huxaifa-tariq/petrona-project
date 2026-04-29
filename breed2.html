@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BREEDS — Dog Encyclopedia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #fdf6ed;
+      --warm-brown: #3b1f0e;
+      --amber: #c8692a;
+      --amber-light: #e8883d;
+      --tan: #d4a96a;
+      --tan-light: #f0d9b5;
+      --dark: #1a0e06;
+      --card-bg: #fffaf4;
+      --shadow: 0 8px 40px rgba(59,31,14,0.13);
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--warm-brown);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--warm-brown);
+      padding: 0 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--tan-light);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--tan);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    /* ── HERO HEADER ── */
+    .hero {
+      background: linear-gradient(135deg, var(--warm-brown) 0%, #5c3218 60%, var(--amber) 100%);
+      text-align: center;
+      padding: 6rem 2rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900;
+      color: var(--tan-light);
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span { color: var(--amber-light); }
+
+    .hero p {
+      color: var(--tan);
+      font-size: 1.1rem;
+      max-width: 550px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--amber-light);
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--tan-light);
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1.5px solid var(--tan-light);
+      padding: 6px 20px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .filter-btn.active {
+      background: var(--amber);
+      color: white;
+      border-color: var(--amber);
+    }
+
+    /* ── GRID & CARDS ── */
+    .section-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .breed-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(212,169,106,0.1);
+      visibility: hidden; /* Hidden initially for GSAP */
+    }
+
+    .card-img-wrap {
+      height: 250px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .breed-card:hover .card-img-wrap img {
+      transform: scale(1.1);
+    }
+
+    .size-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      backdrop-filter: blur(5px);
+    }
+
+    .card-body { padding: 1.5rem; flex-grow: 1; }
+    .card-body h5 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.8rem; }
+    .card-meta { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .meta-chip { background: var(--tan-light); padding: 3px 10px; border-radius: 5px; font-size: 0.75rem; }
+    .card-btn {
+        display: block;
+        text-align: center;
+        background: var(--warm-brown);
+        color: white;
+        padding: 12px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .card-btn:hover { background: var(--amber); }
+
+    footer { background: var(--warm-brown); color: var(--tan); text-align: center; padding: 3rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="#">🐾 BREEDS</a>
+  <ul class="nav-links">
+    <li><a href="https://en.wikipedia.org/wiki/Dog">Encyclopedia</a></li>
+    <li><a href="behavior.html">Care Tips</a></li>
+    
+  </ul>
+</nav>
+
+<section class="hero">
+  <h1 id="hero-title">Common <span>Breeds</span></h1>
+  <p id="hero-desc">Explore the unique characteristics and histories of man's best friend through our curated encyclopedia.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">16</div><div class="stat-label">Breeds</div></div>
+    <div class="stat"><div class="stat-num">7+</div><div class="stat-label">Origins</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Sizes</div></div>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
+  <button class="filter-btn" onclick="filterCards('small', this)">Small</button>
+  <button class="filter-btn" onclick="filterCards('medium', this)">Medium</button>
+  <button class="filter-btn" onclick="filterCards('large', this)">Large</button>
+</div>
+
+<div class="section-wrapper">
+  <div class="cards-grid" id="cards-grid">
+
+    <!-- German Shepherd -->
+    <div class="breed-card" data-size="large">
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?auto=format&fit=crop&w=600&q=80" alt="German Shepherd">
+        <span class="size-badge">Large</span>
+      </div>
+      <div class="card-body">
+        <h5>German Shepherd</h5>
+        <div class="card-meta"><span class="meta-chip">22–40 kg</span><span class="meta-chip">9–13 yrs</span></div>
+        <p>A large, intelligent, and loyal dog known for protection and police work.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+    <!-- Rottweiler -->
+    <div class="breed-card" data-size="large">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Frottweiler_4.jpg&cd=43ec34c424de0f1bc4afb7d2c1aa9e9f" alt="rott">
+        <span class="size-badge">Large</span>
+      </div>
+      <div class="card-body">
+        <h5>Rottweiler</h5>
+        <div class="card-meta"><span class="meta-chip">22–40 kg</span><span class="meta-chip">9–13 yrs</span></div>
+        <p>The Rottweiler is a muscular, courageous and devoted dog breed. Descended from Roman drover dogs, they were originally used to move and guide herds of the Roman army. Today, “Rotties” are still used as herding dogs, but are also trusted service dogs, guard dogs and companions..</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+    
+    <!-- dobber man -->
+    <div class="breed-card" data-size="large">
+      <div class="card-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Dobermann_handling.jpg/500px-Dobermann_handling.jpg" alt="dobber">
+        <span class="size-badge">Large</span>
+      </div>
+      <div class="card-body">
+        <h5>DOBERMAN</h5>
+        <div class="card-meta"><span class="meta-chip">22–40 kg</span><span class="meta-chip">9–13 yrs</span></div>
+        <p>The brave and intelligent Doberman is both a loyal and affectionate family dog and watchful guard dog...</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+    
+    <!-- Bullmastiff -->
+    <div class="breed-card" data-size="large">
+      <div class="card-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Bullmastiff_edited.JPG/500px-Bullmastiff_edited.JPG" alt="bull">
+        <span class="size-badge">Large</span>
+      </div>
+      <div class="card-body">
+        <h5>Bullmastiff</h5>
+        <div class="card-meta"><span class="meta-chip">22–40 kg</span><span class="meta-chip">9–13 yrs</span></div>
+        <p>The Bullmastiff breed is a compact, powerful, muscular dog with a large, square head..</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>    
+
+<!-- Dalmatian  -->
+    <div class="breed-card" data-size="large">
+      <div class="card-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Sun_Dog_Dalmatian.jpg/500px-Sun_Dog_Dalmatian.jpg" alt="dLM">
+        <span class="size-badge">Large</span>
+      </div>
+      <div class="card-body">
+        <h5>Dalmatian </h5>
+        <div class="card-meta"><span class="meta-chip">22–40 kg</span><span class="meta-chip">9–13 yrs</span></div>
+        <p>The Dalmatian is the original coach dog, well known for riding proudly atop a fire engine or running with a carriage. Dalmatians are both smart and muscular, with stamina to keep up the pace. .</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>    
+    
+
+    <!-- Siberian Husky -->
+    <div class="breed-card" data-size="medium">
+      <div class="card-img-wrap">
+        <img src="https://res.cloudinary.com/dxvhcwyxe/image/upload/f_auto,dpr_auto,w_1024,q_auto,c_fill,h_768,g_auto/ugc/breed/7d81f4f8-c6d8-47c8-af42-7199d5c9866e" alt="Husky">
+        <span class="size-badge">Medium</span>
+      </div>
+      <div class="card-body">
+        <h5>Siberian Husky</h5>
+        <div class="card-meta"><span class="meta-chip">16–27 kg</span><span class="meta-chip">12–14 yrs</span></div>
+        <p>A strong, energetic sled dog built for high endurance in cold climates.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+
+<!-- Italian Greyhound -->
+    <div class="breed-card" data-size="medium">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fitalian_greyhound_4_1.jpg&cd=ef8e9e44481e07332d608427ca908db7" alt="italian greyhound">
+        <span class="size-badge">Medium</span>
+      </div>
+      <div class="card-body">
+        <h5>Italian Greyhound</h5>
+        <div class="card-meta"><span class="meta-chip">5–7 kg</span><span class="meta-chip">12–15 yrs</span></div>
+        <p>the Italian Greyhound excels as a companion and hunter of small game. Friendly with adults and children, this breed has a gentle, playful nature. An intelligent dog that is easy to train..</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+<!-- Irish Water Spaniel -->
+    <div class="breed-card" data-size="medium">
+      <div class="card-img-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Ierse_Water_Spaniel.jpg/500px-Ierse_Water_Spaniel.jpg" alt="irish">
+        <span class="size-badge">Medium</span>
+      </div>
+      <div class="card-body">
+        <h5>Irish Water Spaniel</h5>
+        <div class="card-meta"><span class="meta-chip">5–7 kg</span><span class="meta-chip">12–15 yrs</span></div>
+        <p>dog that is the tallest of the spaniels. It is one of Ireland's nine native dog breeds, also known as a "bog-dog"...</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+    
+<!-- BORDER COLLIE -->
+    <div class="breed-card" data-size="medium">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fborder_collie_2_1.jpg&cd=84a03116e8c7f6dc4562b94ba3271ea0" alt="border">
+        <span class="size-badge">Medium</span>
+      </div>
+      <div class="card-body">
+        <h5>BORDER COLLIE</h5>
+        <div class="card-meta"><span class="meta-chip">5–7 kg</span><span class="meta-chip">12–15 yrs</span></div>
+        <p>Prized for his intelligence, herding instinct and working ability, the Border Collie is a hard-working dog that also makes an affectionate pet for active families...</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+<!-- poodle -->
+    <div class="breed-card" data-size="medium">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fpoodle_standard_4_1.jpg&cd=c32130f6ef8e3e687f7d0d1f6b51ee29" alt="poodle">
+        <span class="size-badge">Medium</span>
+      </div>
+      <div class="card-body">
+        <h5>POODLE</h5>
+        <div class="card-meta"><span class="meta-chip">5–7 kg</span><span class="meta-chip">12–18 yrs</span></div>
+        <p>Miniature and Standard Poodles are Non-Sporting breeds, whereas Toy Poodles naturally fall into the Toy group..</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+
+    <!-- French Bulldog -->
+    <div class="breed-card" data-size="small">
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80" alt="Frenchie">
+        <span class="size-badge">Small</span>
+      </div>
+      <div class="card-body">
+        <h5>French Bulldog</h5>
+        <div class="card-meta"><span class="meta-chip">8–14 kg</span><span class="meta-chip">10–12 yrs</span></div>
+        <p>A compact, bat-eared charmer that adapts well to apartment life.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+ <!-- pug -->
+    <div class="breed-card" data-size="small">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fpug_3.jpg&cd=e243465b48865040f7a1704ef5a22210" alt="PUG">
+        <span class="size-badge">Small</span>
+      </div>
+      <div class="card-body">
+        <h5>PUG</h5>
+        <div class="card-meta"><span class="meta-chip">14–18 pounds</span><span class="meta-chip">10–12 yrs</span></div>
+        <p>A compact, bat-eared charmer that adapts well to apartment life.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+ 
+     <!-- beagle -->
+    <div class="breed-card" data-size="small">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fbeagle2_red-collar.jpg&cd=f39b5711c26a8d3665d5160ee9cdfb91" alt="BEAGLE">
+        <span class="size-badge">Small</span>
+      </div>
+      <div class="card-body">
+        <h5>BEAGLE</h5>
+        <div class="card-meta"><span class="meta-chip">14–18 pounds</span><span class="meta-chip">10–12 yrs</span></div>
+        <p>A compact, bat-eared charmer that adapts well to apartment life.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+         <!-- chihahua -->
+    <div class="breed-card" data-size="small">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fchihuahua_4.jpg&cd=467398fc418dc4ca45cceb88e4b91a98" alt="BEAGLE">
+        <span class="size-badge">Small</span>
+      </div>
+      <div class="card-body">
+        <h5>CHIHAHUA</h5>
+        <div class="card-meta"><span class="meta-chip">14–18 pounds</span><span class="meta-chip">10–12 yrs</span></div>
+        <p>A compact, bat-eared charmer that adapts well to apartment life.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+    
+     <!-- Pomeranian -->
+    <div class="breed-card" data-size="small">
+      <div class="card-img-wrap">
+        <img src="https://www.purina.com/.netlify/images?w=1000&h=1000&fm=avif&q=75&url=https%3A%2F%2Flive.purina.com%2Fsites%2Fdefault%2Ffiles%2F2025-09%2Fpomeranian_2_1.jpg&cd=d2f5ffd7ef2653b0009d9424b5e71a88" alt="BEAGLE">
+        <span class="size-badge">Small</span>
+      </div>
+      <div class="card-body">
+        <h5>Pomeranian</h5>
+        <div class="card-meta"><span class="meta-chip">14–18 pounds</span><span class="meta-chip">10–12 yrs</span></div>
+        <p>A compact, bat-eared charmer that adapts well to apartment life.</p>
+        <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+      </div>
+    </div>
+
+    <!-- Golden Retriever -->
+    <div class="breed-card" data-size="large">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80" alt="Golden">
+          <span class="size-badge">Large</span>
+        </div>
+        <div class="card-body">
+          <h5>Golden Retriever</h5>
+          <div class="card-meta"><span class="meta-chip">25–34 kg</span><span class="meta-chip">10–12 yrs</span></div>
+          <p>Gentle, affectionate, and extraordinary trainability.</p>
+          <a href="https://www.purina.com/" class="card-btn">Learn More</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>🐾 BREEDS — Dog Encyclopedia | 2024</p>
+</footer>
+
+<!-- GSAP SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+  // 1. Initial Page Load Animation
+  window.addEventListener('load', () => {
+    const tl = gsap.timeline();
+
+    tl.from("nav", { y: -100, opacity: 0, duration: 1, ease: "power4.out" })
+      .from("#hero-title", { y: 50, opacity: 0, duration: 0.8 }, "-=0.5")
+      .from("#hero-desc", { y: 30, opacity: 0, duration: 0.8 }, "-=0.6")
+      .from(".stat", { scale: 0.8, opacity: 0, stagger: 0.2, duration: 0.5 }, "-=0.4")
+      .to(".breed-card", { 
+          visibility: "visible", 
+          y: 0, 
+          opacity: 1, 
+          stagger: 0.1, 
+          duration: 0.8, 
+          ease: "back.out(1.7)" 
+      }, "-=0.2");
+  });
+
+  // 2. GSAP Filter Animation
+  function filterCards(size, btn) {
+    // UI Update
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.breed-card');
+    
+    // Animate cards out, then filter, then animate back in
+    gsap.to(cards, {
+        scale: 0.8,
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+            cards.forEach(card => {
+                const show = size === 'all' || card.dataset.size === size;
+                card.style.display = show ? 'flex' : 'none';
+            });
+            
+            // Animate visible cards back in
+            gsap.to(".breed-card[style*='display: flex']", {
+                scale: 1,
+                opacity: 1,
+                stagger: 0.1,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
+    });
+  }
+</script>
+
+</body>
+</html>

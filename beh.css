@@ -1,0 +1,81 @@
+:root {
+  --claude-bg: #F9F7F2;
+  --claude-accent: #D97757;
+  --claude-text: #2D2D2D;
+  --claude-border: #E8E2D6;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'DM Sans', sans-serif;
+}
+
+body {
+  background-color: var(--claude-bg);
+  color: var(--claude-text);
+  font-family: var(--font-sans);
+}
+
+.sec-head {
+  text-align: center;
+  padding: 80px 20px 40px;
+}
+
+.sec-head h2 {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.sec-head h2 span {
+  color: var(--claude-accent);
+  font-style: italic;
+}
+
+.beh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto 100px;
+  padding: 0 40px;
+}
+
+.beh-card {
+  background: #FFFFFF;
+  border: 1px solid var(--claude-border);
+  padding: 32px;
+  border-radius: 12px;
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.beh-card:hover {
+  border-color: var(--claude-accent);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+}
+
+.beh-icon {
+  font-size: 2rem;
+  background: var(--claude-bg);
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+}
+
+.beh-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--claude-text);
+}
+
+.beh-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+  font-weight: 300;
+}
